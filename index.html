@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Annual Income Estimator</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    label, select, input {
+      margin-top: 12px;
+      display: block;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    select, input {
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .occupation-fields {
+      display: none;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 16px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #0069d9;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1.1em;
+      background: #e8f1fd;
+      border-left: 5px solid #007bff;
+      padding: 12px;
+      border-radius: 6px;
+      color: #2c3e50;
+      white-space: pre-wrap;
+    }
+
+    .result small {
+      display: block;
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Annual Income Estimator</h2>
+
+    <label for="occupation">Choose Occupation:</label>
+    <select id="occupation" onchange="toggleFields()">
+      <option value="">-- Select --</option>
+      <option value="tailoring">Tailoring</option>
+      <option value="agri_vendor">Agri Vendor</option>
+      <option value="farming">Farming</option>
+      <option value="dairy">Dairy</option>
+      <option value="goat">Goat</option>
+      <option value="handicraft">Handicraft</option>
+      <option value="food_business">Food Business</option>
+      <option value="kirana">Kirana</option>
+      <option value="non_kirana">Non-Kirana Retail</option>
+    </select>
+
+    <!-- Input Fields -->
+    <div id="tailoring" class="occupation-fields">
+      <label>Monthly Sales (₹):</label>
+      <input type="number" id="tailoring_sales" />
+    </div>
+
+    <div id="agri_vendor" class="occupation-fields">
+      <label>Daily Sales (₹):</label>
+      <input type="number" id="agri_sales" />
+    </div>
+
+    <div id="farming" class="occupation-fields">
+      <label>Land Holding (in acres):</label>
+      <input type="number" id="farm_acres" />
+      <label>Yield per Acre (quintals):</label>
+      <input type="number" id="farm_yield" />
+      <label>Rate per Quintal (₹):</label>
+      <input type="number" id="farm_rate" />
+    </div>
+
+    <div id="dairy" class="occupation-fields">
+      <label>Number of Cattle:</label>
+      <input type="number" id="dairy_count" />
+      <label>Daily Yield per Animal (litres):</label>
+      <input type="number" id="dairy_yield" />
+    </div>
+
+    <div id="goat" class="occupation-fields">
+      <label>Units Sold per Month:</label>
+      <input type="number" id="goat_units" />
+    </div>
+
+    <div id="handicraft" class="occupation-fields">
+      <label>Monthly Sales (₹):</label>
+      <input type="number" id="handi_sales" />
+    </div>
+
+    <div id="food_business" class="occupation-fields">
+      <label>Daily Sales (₹):</label>
+      <input type="number" id="food_sales" />
+    </div>
+
+    <div id="kirana" class="occupation-fields">
+      <label>Daily Sales (₹):</label>
+      <input type="number" id="kirana_sales" />
+    </div>
+
+    <div id="non_kirana" class="occupation-fields">
+      <label>Daily Sales (₹):</label>
+      <input type="number" id="nonkirana_sales" />
+    </div>
+
+    <button onclick="calculateIncome()">Estimate Annual Income</button>
+
+    <div class="result" id="output"></div>
+  </div>
+
+  <script>
+    function toggleFields() {
+      const occupations = [
+        "tailoring", "agri_vendor", "farming", "dairy",
+        "goat", "handicraft", "food_business", "kirana", "non_kirana"
+      ];
+      const selected = document.getElementById("occupation").value;
+      occupations.forEach(o => {
+        document.getElementById(o).style.display = o === selected ? "block" : "none";
+      });
+      document.getElementById("output").innerHTML = "";
+    }
+
+    function calculateIncome() {
+      const occ = document.getElementById("occupation").value;
+      let income = 0;
+      let explanation = "";
+      let formula = "";
+
+      switch (occ) {
+        case "tailoring":
+          const tailoringSales = Number(document.getElementById("tailoring_sales").value);
+          income = tailoringSales * 0.61 * 12;
+          formula = "Formula: Income = Monthly Sales × Margin × 12";
+          explanation = "Note: Assumes 61% margin as per survey methodology.";
+          break;
+
+        case "agri_vendor":
+          const s = Number(document.getElementById("agri_sales").value);
+          income = ((s * 300) + (s * 18 * 1.46)) * 0.62;
+          formula = "Formula: Income = [(S × 300) + (S × 18 × 1.46)] × Margin";
+          explanation = "Note: Assumes 62% margin, 300 normal days, 18 seasonal days, 1.46 seasonality factor.";
+          break;
+
+        case "farming":
+          const a = Number(document.getElementById("farm_acres").value);
+          const y = Number(document.getElementById("farm_yield").value);
+          const r = Number(document.getElementById("farm_rate").value);
+          income = a * y * r;
+          formula = "Formula: Income = Land × Yield × Rate";
+          explanation = "Note: Based on user-entered yield and rate per quintal.";
+          break;
+
+        case "dairy":
+          const count = Number(document.getElementById("dairy_count").value);
+          const yieldPerAnimal = Number(document.getElementById("dairy_yield").value);
+          income = count * yieldPerAnimal * 300 * 46;
+          formula = "Formula: Income = No. of Cattle × Yield × 300 × ₹46";
+          explanation = "Note: Assumes 300 lactation days and ₹46 per litre.";
+          break;
+
+        case "goat":
+          const units = Number(document.getElementById("goat_units").value);
+          income = ((units * 617 * 11) - (units * 1462)) * 12;
+          formula = "Formula: Income = [(Units × ₹617 × 11kg) - (Units × ₹1462)] × 12";
+          explanation = "Note: Assumes ₹617/kg, 11kg avg weight, ₹1462 per unit cost.";
+          break;
+
+        case "handicraft":
+          const hSales = Number(document.getElementById("handi_sales").value);
+          income = hSales * 0.57 * 12;
+          formula = "Formula: Income = Monthly Sales × Margin × 12";
+          explanation = "Note: Assumes 57% margin as per survey methodology.";
+          break;
+
+        case "food_business":
+          const fSales = Number(document.getElementById("food_sales").value);
+          income = ((fSales * 320) + (fSales * 29 * 1.4)) * 0.33;
+          formula = "Formula: Income = [(S × 320) + (S × 29 × 1.4)] × Margin";
+          explanation = "Note: 33% margin, 320 normal days, 29 seasonal days, 1.4 seasonality.";
+          break;
+
+        case "kirana":
+          const kSales = Number(document.getElementById("kirana_sales").value);
+          income = ((kSales * 300) + (kSales * 58 * 1.52)) * 0.22;
+          formula = "Formula: Income = [(S × 300) + (S × 58 × 1.52)] × Margin";
+          explanation = "Note: 22% margin, 300 normal days, 58 seasonal days, 1.52 seasonality.";
+          break;
+
+        case "non_kirana":
+          const nkSales = Number(document.getElementById("nonkirana_sales").value);
+          income = ((nkSales * 300) + (nkSales * 54 * 1.86)) * 0.31;
+          formula = "Formula: Income = [(S × 300) + (S × 54 × 1.86)] × Margin";
+          explanation = "Note: 31% margin, 300 normal days, 54 seasonal days, 1.86 seasonality.";
+          break;
+      }
+
+      document.getElementById("output").innerHTML =
+        "<strong>Estimated Annual Income: ₹ " + Math.round(income).toLocaleString() + "</strong>" +
+        "<small>" + formula + "</small>" +
+        "<small>" + explanation + "</small>";
+    }
+  </script>
+</body>
+</html>
