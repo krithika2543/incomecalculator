@@ -83,6 +83,21 @@
   <div class="container">
     <h2>Annual Income Estimator</h2>
 
+    <label for="state">Select State:</label>
+    <select id="state">
+      <option value="">-- Select State --</option>
+      <option value="karnataka">Karnataka</option>
+      <option value="tamil nadu">Tamil Nadu</option>
+      <option value="uttar pradesh">Uttar Pradesh</option>
+      <option value="west bengal">West Bengal</option>
+      <option value="madhya pradesh">Madhya Pradesh</option>
+      <option value="bihar">Bihar</option>
+      <option value="gujarat">Gujarat</option>
+    </select>
+
+    <label for="seasonal_days">Number of Seasonal Days:</label>
+    <input type="number" id="seasonal_days" placeholder="Enter seasonal days (e.g., 18)" />
+
     <label for="occupation">Choose Occupation:</label>
     <select id="occupation" onchange="toggleFields()">
       <option value="">-- Select --</option>
@@ -169,6 +184,8 @@
 
     function calculateIncome() {
       const occ = document.getElementById("occupation").value;
+      const seasonalDays = Number(document.getElementById("seasonal_days").value);
+      const state = document.getElementById("state").value;
       let income = 0;
       let explanation = "";
       let formula = "";
@@ -178,14 +195,14 @@
           const tailoringSales = Number(document.getElementById("tailoring_sales").value);
           income = tailoringSales * 0.61 * 12;
           formula = "Formula: Income = Monthly Sales × Margin × 12";
-          explanation = "Note: Assumes 61% margin as per survey methodology.";
+          explanation = "Margin = 61%.";
           break;
 
         case "agri_vendor":
           const s = Number(document.getElementById("agri_sales").value);
-          income = ((s * 300) + (s * 18 * 1.46)) * 0.62;
-          formula = "Formula: Income = [(S × 300) + (S × 18 × 1.46)] × Margin";
-          explanation = "Note: Assumes 62% margin, 300 normal days, 18 seasonal days, 1.46 seasonality factor.";
+          income = ((s * 300) + (s * seasonalDays * 1.46)) * 0.62;
+          formula = "Formula: Income = [(S × 300) + (S × Seasonal Days × 1.46)] × Margin";
+          explanation = "Margin = 62%, Seasonality Factor = 1.46.";
           break;
 
         case "farming":
@@ -194,7 +211,7 @@
           const r = Number(document.getElementById("farm_rate").value);
           income = a * y * r;
           formula = "Formula: Income = Land × Yield × Rate";
-          explanation = "Note: Based on user-entered yield and rate per quintal.";
+          explanation = "User-input yield and rate per quintal.";
           break;
 
         case "dairy":
@@ -202,49 +219,50 @@
           const yieldPerAnimal = Number(document.getElementById("dairy_yield").value);
           income = count * yieldPerAnimal * 300 * 46;
           formula = "Formula: Income = No. of Cattle × Yield × 300 × ₹46";
-          explanation = "Note: Assumes 300 lactation days and ₹46 per litre.";
+          explanation = "Assumes 300 lactation days, ₹46 per litre.";
           break;
 
         case "goat":
           const units = Number(document.getElementById("goat_units").value);
           income = ((units * 617 * 11) - (units * 1462)) * 12;
           formula = "Formula: Income = [(Units × ₹617 × 11kg) - (Units × ₹1462)] × 12";
-          explanation = "Note: Assumes ₹617/kg, 11kg avg weight, ₹1462 per unit cost.";
+          explanation = "₹617/kg, 11kg avg weight, ₹1462 per unit cost.";
           break;
 
         case "handicraft":
           const hSales = Number(document.getElementById("handi_sales").value);
           income = hSales * 0.57 * 12;
           formula = "Formula: Income = Monthly Sales × Margin × 12";
-          explanation = "Note: Assumes 57% margin as per survey methodology.";
+          explanation = "Margin = 57%.";
           break;
 
         case "food_business":
           const fSales = Number(document.getElementById("food_sales").value);
-          income = ((fSales * 320) + (fSales * 29 * 1.4)) * 0.33;
-          formula = "Formula: Income = [(S × 320) + (S × 29 × 1.4)] × Margin";
-          explanation = "Note: 33% margin, 320 normal days, 29 seasonal days, 1.4 seasonality.";
+          income = ((fSales * 320) + (fSales * seasonalDays * 1.4)) * 0.33;
+          formula = "Formula: Income = [(S × 320) + (S × Seasonal Days × 1.4)] × Margin";
+          explanation = "Margin = 33%, Seasonality Factor = 1.4.";
           break;
 
         case "kirana":
           const kSales = Number(document.getElementById("kirana_sales").value);
-          income = ((kSales * 300) + (kSales * 58 * 1.52)) * 0.22;
-          formula = "Formula: Income = [(S × 300) + (S × 58 × 1.52)] × Margin";
-          explanation = "Note: 22% margin, 300 normal days, 58 seasonal days, 1.52 seasonality.";
+          income = ((kSales * 300) + (kSales * seasonalDays * 1.52)) * 0.22;
+          formula = "Formula: Income = [(S × 300) + (S × Seasonal Days × 1.52)] × Margin";
+          explanation = "Margin = 22%, Seasonality Factor = 1.52.";
           break;
 
         case "non_kirana":
           const nkSales = Number(document.getElementById("nonkirana_sales").value);
-          income = ((nkSales * 300) + (nkSales * 54 * 1.86)) * 0.31;
-          formula = "Formula: Income = [(S × 300) + (S × 54 × 1.86)] × Margin";
-          explanation = "Note: 31% margin, 300 normal days, 54 seasonal days, 1.86 seasonality.";
+          income = ((nkSales * 300) + (nkSales * seasonalDays * 1.86)) * 0.31;
+          formula = "Formula: Income = [(S × 300) + (S × Seasonal Days × 1.86)] × Margin";
+          explanation = "Margin = 31%, Seasonality Factor = 1.86.";
           break;
       }
 
       document.getElementById("output").innerHTML =
         "<strong>Estimated Annual Income: ₹ " + Math.round(income).toLocaleString() + "</strong>" +
         "<small>" + formula + "</small>" +
-        "<small>" + explanation + "</small>";
+        "<small>" + explanation + "</small>" +
+        "<small>State Selected: " + (state || "Not selected") + "</small>";
     }
   </script>
 </body>
